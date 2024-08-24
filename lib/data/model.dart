@@ -1,32 +1,28 @@
 class Repository {
-  final String name;
-  // final String fullName;
-  // final String htmlUrl;
-  // final String description;
+  final String repoName;
   final int stargazersCount;
-  // final String language;
-  // final DateTime createdAt;
+  final String? description; // Make description nullable
+  // final String? language; // Make language nullable
+  final String? imageUrl; // Example field for image URL
+  final String userName;
 
   Repository({
-    required this.name,
-    // required this.fullName,
-    // required this.htmlUrl,
-    // required this.description,
+    required this.userName,
+    required this.repoName,
     required this.stargazersCount,
-    // required this.language,
-    // required this.createdAt,
+    this.description, // Nullable field
+    // this.language, // Nullable field
+    this.imageUrl, // Nullable field
   });
 
   factory Repository.fromJson(Map<String, dynamic> json) {
     return Repository(
-      name: json['name'],
-      // fullName: json['full_name'],
-      // htmlUrl: json['html_url'],
-      // description: json['description'] ?? 'No description',
-      stargazersCount: json['stargazers_count'],
-      // language: json['language'] ?? 'Unknown',
-      // createdAt: DateTime.parse(json['created_at']
-      // ),
+      repoName: json['name'] ?? 'Unknown', // Provide default value if null
+      stargazersCount: json['stargazers_count'] ?? 0, // Default to 0 if null
+      description: json['description'] as String?,
+      userName: json['owner']?['login'] ?? 'Unknown',
+      imageUrl:
+          json['owner']?['avatar_url'] as String?, // Assume image URL is nested
     );
   }
 }

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:machine_task/data/model.dart';
 import 'package:machine_task/domine/repository/repository.dart';
 
-class ListAllRepoScreen extends StatefulWidget {
-  const ListAllRepoScreen({super.key});
+class ListForLastThirtyDays extends StatefulWidget {
+  const ListForLastThirtyDays({super.key});
 
   @override
-  State<ListAllRepoScreen> createState() => _ListAllRepoScreenState();
+  State<ListForLastThirtyDays> createState() => _ListForLastThirtyDaysState();
 }
 
-class _ListAllRepoScreenState extends State<ListAllRepoScreen> {
+class _ListForLastThirtyDaysState extends State<ListForLastThirtyDays> {
   final scrollController = ScrollController();
   bool isLoadingMore = false;
   List<Repository> repos = [];
@@ -24,7 +24,8 @@ class _ListAllRepoScreenState extends State<ListAllRepoScreen> {
 
   Future<void> fetchRepos() async {
     try {
-      final newRepos = await GitHubRepository.getMostStarredRepos(page);
+      final newRepos =
+          await GitHubRepository.getMostStarredReposforlast30Days(page);
       setState(() {
         repos.addAll(newRepos);
       });
@@ -53,7 +54,7 @@ class _ListAllRepoScreenState extends State<ListAllRepoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Most Starred Repos'),
+        title: const Text('List For Last 30 Days'),
       ),
       body: repos.isEmpty
           ? const Center(child: CircularProgressIndicator())
