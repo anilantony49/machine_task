@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:machine_task/data/model.dart';
 import 'package:machine_task/domine/repository/repository.dart';
+import 'package:machine_task/repo_detail_screen.dart';
 
 class ListAllRepoScreen extends StatefulWidget {
   const ListAllRepoScreen({super.key});
@@ -53,87 +54,112 @@ class _ListAllRepoScreenState extends State<ListAllRepoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Most Starred Repos'),
+        centerTitle: true,
+        backgroundColor: const Color(0xFFE36731),
+        title: const Text(
+          'Most Starred Repos',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
-      body: repos.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : RawScrollbar(
-              minThumbLength: 100,
-              controller: scrollController,
-              thumbVisibility: true,
-              thickness: 10.0,
-              radius: const Radius.circular(10),
-              child: ListView.separated(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFE36731), Color(0xFFDABE5D)], // Custom gradient
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: repos.isEmpty
+            ? const Center(child: CircularProgressIndicator())
+            : RawScrollbar(
+                minThumbLength: 100,
                 controller: scrollController,
-                itemCount: isLoadingMore ? repos.length + 1 : repos.length,
-                itemBuilder: (context, index) {
-                  print(repos.length);
-                  if (index < repos.length) {
-                    final repo = repos[index];
-                    return ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage: repo.imageUrl != null
-                            ? NetworkImage(repo.imageUrl!)
-                            : null,
-                        child: repo.imageUrl == null
-                            ? const Icon(Icons.code)
-                            : null,
-                      ),
-                      title: Row(
-                        children: [
-                          SizedBox(
-                            width: 150,
-                            child: Text(
-                              repo.repoName,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                thumbVisibility: true,
+                thickness: 10.0,
+                radius: const Radius.circular(10),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListView.separated(
+                    controller: scrollController,
+                    itemCount: isLoadingMore ? repos.length + 1 : repos.length,
+                    itemBuilder: (context, index) {
+                      print(repos.length);
+                      if (index < repos.length) {
+                        final repo = repos[index];
+                        return ListTile(
+                          leading: CircleAvatar(
+                            radius: 25,
+                            backgroundImage: repo.imageUrl != null
+                                ? NetworkImage(repo.imageUrl!)
+                                : null,
+                            child: repo.imageUrl == null
+                                ? const Icon(Icons.code)
+                                : null,
                           ),
-                          const Spacer(),
-                          Text(
-                            '${repo.stargazersCount} stars',
-                            style: const TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.w500),
-                          ),
-                        ],
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
+                          title: Row(
                             children: [
+                              SizedBox(
+                                width: 150,
+                                child: Text(
+                                  repo.repoName,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const Spacer(),
                               Text(
-                                repo.userName,
+                                '${repo.stargazersCount} stars',
                                 style: const TextStyle(
-                                    fontSize: 14, fontWeight: FontWeight.w700),
+                                    fontSize: 15, fontWeight: FontWeight.w500),
                               ),
                             ],
                           ),
-                          if (repo.description != null)
-                            SizedBox(
-                              child: Text(
-                                repo.description!,
-                                overflow: TextOverflow.ellipsis,
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    repo.userName,
+                                    style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700),
+                                  ),
+                                ],
                               ),
-                            ),
-                        ],
-                      ),
-                      onTap: () {
-                        // Optionally handle repo tap, e.g., navigate to repo details
-                      },
-                    );
-                  } else {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                },
-                separatorBuilder: (context, index) => const Divider(),
+                              if (repo.description != null)
+                                SizedBox(
+                                  child: Text(
+                                    repo.description!,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                            ],
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => RepoDetailScreen(
+                                          repo: repo,
+                                        )));
+                            // Optionally handle repo tap, e.g., navigate to repo details
+                          },
+                        );
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    },
+                    separatorBuilder: (context, index) => const Divider(),
+                  ),
+                ),
               ),
-            ),
+      ),
     );
   }
 }

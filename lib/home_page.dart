@@ -31,10 +31,10 @@ class HomePage extends StatelessWidget {
                   'Click here to see the most starred GitHub repos that were created in the last 30 days.'),
               trailing: const Icon(Icons.arrow_forward),
               onTap: () {
-                  Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const ListAllRepoScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ListAllRepoScreen()));
               },
             ),
           ),
