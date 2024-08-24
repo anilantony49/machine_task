@@ -1,28 +1,97 @@
 import 'package:flutter/material.dart';
 import 'package:machine_task/data/model.dart';
+import 'package:machine_task/database_helper.dart';
 
-class RepoDetailScreen extends StatelessWidget {
+class RepoDetailScreen extends StatefulWidget {
   final Repository repo;
 
   const RepoDetailScreen({super.key, required this.repo});
+
+  @override
+  State<RepoDetailScreen> createState() => _RepoDetailScreenState();
+}
+
+class _RepoDetailScreenState extends State<RepoDetailScreen> {
+  bool _isSaved = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIfSaved();
+  }
+
+  Future<void> _checkIfSaved() async {
+    final dbHelper = DatabaseHelper.instance;
+    final db = await dbHelper.database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'repositories',
+      where: 'id = ?',
+      whereArgs: [widget.repo.id],
+    );
+
+    setState(() {
+      _isSaved = maps.isNotEmpty;
+    });
+  }
+
+  // Future<void> _saveRepo(BuildContext context) async {
+  //   try {
+  //     final dbHelper = DatabaseHelper.instance;
+  //     await dbHelper.insertRepository(widget.repo);
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(
+  //         content: Text('Repository saved!'),
+  //       ),
+  //     );
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text('Failed to save repository: $e'),
+  //       ),
+  //     );
+  //   }
+  // }
+
+  Future<void> _toggleSaveRepo() async {
+    final dbHelper = DatabaseHelper.instance;
+    if (_isSaved) {
+      await dbHelper.deleteRepository(widget.repo.id);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Repository removed!'),
+        ),
+      );
+    } else {
+      await dbHelper.insertRepository(widget.repo);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Repository saved!'),
+        ),
+      );
+    }
+
+    setState(() {
+      _isSaved = !_isSaved;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          repo.repoName,
+          widget.repo.repoName,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
           ),
         ),
         actions: [
           IconButton(
-              onPressed: () {},
-              icon: const Padding(
-                padding: EdgeInsets.only(right: 20),
+              onPressed:  _toggleSaveRepo,
+              icon: Padding(
+                padding: const EdgeInsets.only(right: 20),
                 child: Icon(
-                  Icons.save,
+                  _isSaved ? Icons.bookmark : Icons.bookmark_border,
                   size: 25,
                 ),
               ))
@@ -42,16 +111,16 @@ class RepoDetailScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (repo.imageUrl != null)
+              if (widget.repo.imageUrl != null)
                 Center(
                   child: CircleAvatar(
                     radius: 50,
-                    backgroundImage: NetworkImage(repo.imageUrl!),
+                    backgroundImage: NetworkImage(widget.repo.imageUrl!),
                   ),
                 ),
               const SizedBox(height: 16),
               Text(
-                repo.repoName,
+                widget.repo.repoName,
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -60,7 +129,7 @@ class RepoDetailScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Username: ${repo.userName}',
+                'Username: ${widget.repo.userName}',
                 style: const TextStyle(
                   fontSize: 18,
                   color: Colors.white70,
@@ -68,7 +137,7 @@ class RepoDetailScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                '${repo.stargazersCount} stars',
+                '${widget.repo.stargazersCount} stars',
                 style: const TextStyle(
                   fontSize: 18,
                   color: Colors.white70,
@@ -87,7 +156,7 @@ class RepoDetailScreen extends StatelessWidget {
               Expanded(
                 child: SingleChildScrollView(
                   child: Text(
-                    repo.description ?? 'No description available.',
+                    widget.repo.description ?? 'No description available.',
                     style: const TextStyle(
                       fontSize: 16,
                       color: Colors.white70,
