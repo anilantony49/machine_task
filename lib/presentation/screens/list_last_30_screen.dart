@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:machine_task/data/model.dart';
 import 'package:machine_task/domine/repository/repository.dart';
+import 'package:machine_task/provider/repo_provider.dart';
+import 'package:provider/provider.dart';
 
 class ListForLastThirtyDays extends StatefulWidget {
   const ListForLastThirtyDays({super.key});
@@ -10,67 +12,74 @@ class ListForLastThirtyDays extends StatefulWidget {
 }
 
 class _ListForLastThirtyDaysState extends State<ListForLastThirtyDays> {
-  final scrollController = ScrollController();
-  bool isLoadingMore = false;
-  List<Repository> repos = [];
-  int page = 1;
+  // final scrollController = ScrollController();
+  // bool isLoadingMore = false;
+  // List<Repository> repos = [];
+  // int page = 1;
 
-  @override
-  void initState() {
-    super.initState();
-    scrollController.addListener(_scrollListener);
-    fetchRepos();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   scrollController.addListener(_scrollListener);
+  //   fetchRepos();
+  // }
 
-  Future<void> fetchRepos() async {
-    try {
-      final newRepos =
-          await GitHubRepository.getMostStarredReposforlast30Days(page);
-      setState(() {
-        repos.addAll(newRepos);
-      });
-    } catch (e) {
-      // Handle error
-      print('Error: $e');
-    }
-  }
+  // Future<void> fetchRepos() async {
+  //   try {
+  //     final newRepos =
+  //         await GitHubRepository.getMostStarredReposforlast30Days(page);
+  //     setState(() {
+  //       repos.addAll(newRepos);
+  //     });
+  //   } catch (e) {
+  //     // Handle error
+  //     print('Error: $e');
+  //   }
+  // }
 
-  Future<void> _scrollListener() async {
-    if (isLoadingMore) return;
-    if (scrollController.position.pixels ==
-        scrollController.position.maxScrollExtent) {
-      setState(() {
-        isLoadingMore = true;
-      });
-      page = page + 1;
-      await fetchRepos();
-      setState(() {
-        isLoadingMore = false;
-      });
-    }
-  }
+  // Future<void> _scrollListener() async {
+  //   if (isLoadingMore) return;
+  //   if (scrollController.position.pixels ==
+  //       scrollController.position.maxScrollExtent) {
+  //     setState(() {
+  //       isLoadingMore = true;
+  //     });
+  //     page = page + 1;
+  //     await fetchRepos();
+  //     setState(() {
+  //       isLoadingMore = false;
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
+    final repoProvider = Provider.of<RepoProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('List For Last 30 Days'),
       ),
-      body: repos.isEmpty
+      body: repoProvider.repos.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : RawScrollbar(
+              thumbColor: Colors.white,
+              // trackColor: Colors.white,
+              // thumbColor: Colors.white,
               minThumbLength: 100,
-              controller: scrollController,
+              controller: repoProvider.scrollController,
               thumbVisibility: true,
               thickness: 10.0,
-              radius: const Radius.circular(10),
+              radius: const Radius.circular(5),
               child: ListView.separated(
-                controller: scrollController,
-                itemCount: isLoadingMore ? repos.length + 1 : repos.length,
+                controller: repoProvider.scrollController,
+                itemCount: repoProvider.isLoadingMore
+                    ? repoProvider.repos.length + 1
+                    : repoProvider.repos.length,
                 itemBuilder: (context, index) {
-                  print(repos.length);
-                  if (index < repos.length) {
-                    final repo = repos[index];
+                  print(repoProvider.repos.length);
+                  if (index < repoProvider.repos.length) {
+                    final repo = repoProvider.repos[index];
                     return ListTile(
                       leading: CircleAvatar(
                         backgroundImage: repo.imageUrl != null
