@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:machine_task/data/model.dart';
 import 'package:machine_task/domine/repository/repository.dart';
 
-class RepoProvider with ChangeNotifier {
+class RepoProviderForLast30Days with ChangeNotifier {
   final ScrollController _scrollController = ScrollController();
   final List<Repository> _repos = [];
   bool _isLoadingMore = false;
@@ -12,14 +12,19 @@ class RepoProvider with ChangeNotifier {
   bool get isLoadingMore => _isLoadingMore;
   ScrollController get scrollController => _scrollController;
 
-  RepoProvider() {
+  RepoProviderForLast30Days() {
     _scrollController.addListener(_scrollListener);
-    fetchRepos();
+    fetchReposForLast30Days();
   }
 
-  Future<void> fetchRepos() async {
+  Future<void> fetchReposForLast30Days() async {
     try {
-      final newRepos = await GitHubRepository.getMostStarredRepos(_page);
+
+      if(_page ==1){
+        _repos.clear(); 
+      }
+      final newRepos =
+          await GitHubRepository.getMostStarredReposForLast30Days(_page);
       _repos.addAll(newRepos);
       notifyListeners();
     } catch (e) {
@@ -27,17 +32,6 @@ class RepoProvider with ChangeNotifier {
       print('Error: $e');
     }
   }
-
-  // Future<void> _scrollListener() async {
-  //   if (_isLoadingMore) return;
-  //   if (_scrollController.position.pixels ==
-  //       _scrollController.position.maxScrollExtent) _isLoadingMore = true;
-  //   notifyListeners();
-  //   _page += 1;
-  //   await fetchRepos();
-  //   _isLoadingMore = false;
-  //   notifyListeners();
-  // }
 
   Future<void> _scrollListener() async {
     if (_isLoadingMore ||
@@ -48,7 +42,7 @@ class RepoProvider with ChangeNotifier {
     notifyListeners();
 
     _page += 1;
-    await fetchRepos();
+    await fetchReposForLast30Days();
 
     _isLoadingMore = false;
     notifyListeners();

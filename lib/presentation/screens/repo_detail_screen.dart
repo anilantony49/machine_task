@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:machine_task/data/model.dart';
-import 'package:machine_task/dbHelper/database_helper.dart';
 import 'package:machine_task/provider/repo_detail_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -9,7 +8,6 @@ class RepoDetailScreen extends StatelessWidget {
 
   const RepoDetailScreen({super.key, required this.repo});
 
-  // bool _isSaved = false;
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(

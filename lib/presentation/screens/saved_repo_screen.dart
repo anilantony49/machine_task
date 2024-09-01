@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:machine_task/data/model.dart';
-import 'package:machine_task/dbHelper/database_helper.dart';
 import 'package:machine_task/provider/saved_repo_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -60,6 +58,10 @@ class _SavedReposScreenState extends State<SavedReposScreen> {
               return const Center(child: CircularProgressIndicator());
             } else if (provider.errorMessage != null) {
               return Center(child: Text('Error: ${provider.errorMessage}'));
+            } else if (provider.savedRepos.isEmpty) {
+              return const Center(
+                child: Text('No items saved'),
+              );
             } else {
               final repos = provider.savedRepos;
 

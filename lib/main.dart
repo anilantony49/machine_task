@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:machine_task/provider/repo_provider.dart';
+import 'package:machine_task/provider/repo_provider_for_last_30_days.dart';
+import 'package:machine_task/provider/repo_provider_for_last_60_days.dart';
 import 'package:machine_task/presentation/screens/home_page.dart';
 import 'package:machine_task/provider/saved_repo_provider.dart';
 import 'package:provider/provider.dart';
@@ -18,8 +19,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => RepoProvider()),
-        ChangeNotifierProvider(create: (context) => RepoProvider()),
+        ChangeNotifierProvider(
+            create: (context) => RepoProviderForLast60Days()),
+        ChangeNotifierProvider(
+            create: (context) => RepoProviderForLast30Days()),
+        // ChangeNotifierProvider(create: (context) => RepoDetailProvider(repo: null)),
+
         ChangeNotifierProvider(create: (context) => SavedReposProvider()),
       ],
       child: MaterialApp(

@@ -3,7 +3,6 @@ class Repository {
   final String repoName;
   final int stargazersCount;
   final String? description; // Make description nullable
-  // final String? language; // Make language nullable
   final String? imageUrl; // Example field for image URL
   final String userName;
 
@@ -13,7 +12,6 @@ class Repository {
     required this.repoName,
     required this.stargazersCount,
     this.description, // Nullable field
-    // this.language, // Nullable field
     this.imageUrl, // Nullable field
   });
 
