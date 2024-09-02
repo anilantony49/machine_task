@@ -2,46 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:machine_task/provider/saved_repo_provider.dart';
 import 'package:provider/provider.dart';
 
-class SavedReposScreen extends StatefulWidget {
+class SavedReposScreen extends StatelessWidget {
   const SavedReposScreen({super.key});
-
-  @override
-  _SavedReposScreenState createState() => _SavedReposScreenState();
-}
-
-class _SavedReposScreenState extends State<SavedReposScreen> {
-  // late Future<List<Repository>> _savedRepos;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _savedRepos = _fetchSavedRepos();
-  // }
-
-  // Future<List<Repository>> _fetchSavedRepos() async {
-  //   final dbHelper = DatabaseHelper.instance;
-  //   final db = await dbHelper.database;
-  //   final List<Map<String, dynamic>> maps = await db.query('repositories');
-
-  //   return List.generate(maps.length, (i) {
-  //     return Repository(
-  //       id: maps[i]['id'],
-  //       repoName: maps[i]['repoName'],
-  //       userName: maps[i]['userName'],
-  //       imageUrl: maps[i]['imageUrl'],
-  //       stargazersCount: maps[i]['stargazersCount'],
-  //       description: maps[i]['description'],
-  //     );
-  //   });
-  // }
-
-  // Future<void> _removeRepo(String id) async {
-  //   final dbHelper = DatabaseHelper.instance;
-  //   await dbHelper.deleteRepository(id);
-  //   setState(() {
-  //     _savedRepos = _fetchSavedRepos(); // Refresh the list
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
